@@ -1,6 +1,6 @@
 ---
 title: "lab2_homework"
-author: "Nicholas Nagle"
+author: "Emily Nield"
 date: "February 2, 2015"
 output: html_document
 ---
