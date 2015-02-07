@@ -18,7 +18,7 @@ A first look at R Studio
 ---------------------------------------
 When you open up R studio for the first time, it might look something like this:
 
-![Screenshot of Rstudio](images/R_studio.png)
+![Screenshot of Rstudio](images/Cabbage_Output.png)
 
  - In the top left, I have a blank, unnamed "R script."  An R script is a text file with the .R extension.  If you don't see one, click `File -> New File -> R Script`.  
  - Below that is the *console*, where you can type in commands.   I treat Console like a scratch pad.  I try commands out there, and when they work, I transfer them to an R script or a markdown file (more on markdown later).  
@@ -84,7 +84,7 @@ I've put some data in the repository that were collected in the 18th century by 
 
 ```{r}
 # Based on where the repository is on my own computer, I enter
-arbuthnot <- read.csv(file='/Users/nnagle/Dropbox/git_root/nnagle/homework1/data/arbuthnot.csv')
+arbuthnot <- read.csv(file="C:/Users/Emily/Documents/enield/homework1/data/arbuthnot.csv")
 ```
 You should see that the Environment window now has a data object called arbuthnot, which has 82 observations and 8 variables.  Click on "arbuthnot" in the workspace window.  You should see a new window that looks like  simplified Excel spreadsheet.  In the crazy language of R, this type of data object is called a 'data.frame.'  
 

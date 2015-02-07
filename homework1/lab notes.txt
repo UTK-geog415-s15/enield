@@ -1,0 +1,63 @@
+Homework 1 
+
+To open lab files in git shell write
+
+
+Use .csv files for data in RStudio.
+
+Data set: 105 males born for every 100 females born. Looking at male/female birthrates in the 17th century. 
+No hospital data availble so they used baptism records. 83 year data set from London over 17th and 18th century. 
+Columns for people who died from the plague and other death rates.
+
+How do you install packkages?
+install.packages('packagename')
+
+Once a package is installed you need to open it.
+library(package name) ex. library(ggplot2)
+
+You will need to open it from the library everytime. 
+
+To make a graphic you need the following:
+1) Data
+2) Aesthetic Mapping (visualizing a function)
+	x=year
+	y=number of christenings
+	colour=sex
+3) Scales
+4) Geometric Objects, ex. line
+
+To open a .csv file:
+
+> arbuthnot <- read.csv(file="C:/Users/Emily/Documents/enield/homework1/data/arbuthnot.csv")
+hit "tab" to finish the folder you are typing
+
+ggplot(data=arbuthnot) + 
+  geom_line(aes(x=Year, y=Males, color='Male')) + 
+  geom_line(aes(x=Year, y=Females, color='Females')) + ylab('Christenings')
+
+
+You can do LaTex ex:
+$$
+\sum_{i=1}^n x_i$$ 
+
+ggplot(data=arbuthnot) + 
+     geom_line(aes(x=Year, y=Males, color='Male')) + 
+     geom_line(aes(x=Year, y=Females, color='Females')) + ylab('Christenings') +
+     scale_y_continuous(limits=c(0, 9000)) +
+    ylab('Christenings') + labs(color='Sex')
+
+
+plot(arbuthnot$Year, arbuthnot$Males, type='l')
+
+ggplot(data=arbuthnot, aes(x=Females, y=Males)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm) +  # Add linear regression line 
+   ylab('Male Christenings') + xlab ('Female Christenings') # add labels                          
+
+ggplot(data=arbuthnot, aes(x=Females, y=Males)) +
+    geom_point(shape=1) +    # Use hollow circles
+   ylab('Male Christenings') + xlab ('Female Christenings') + # add labels
+	geom_abline(intercept = 500, slope = 1) # Insert 45 degree line                          
+
+
+To clear the console "CNTRL+L"
