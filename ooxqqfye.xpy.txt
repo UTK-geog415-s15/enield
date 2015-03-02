@@ -1,0 +1,35 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# Explicit paths specified without -i or -o; assuming --only paths...
+# On branch master
+# Changes to be committed:
+#	deleted:    homework2/lab2_homework.Rmd
+#
+# Changes not staged for commit:
+#	modified:   homework1/Thumbs.db
+#	modified:   homework1/images/Thumbs.db
+#	modified:   homework1/lab notes.txt
+#	deleted:    homework2/lab2_homework.html
+#	modified:   homework3/data/GalapagosData.txt
+#
+# Untracked files:
+#	HMW@test.R
+#	HMW@test.html
+#	Homework 2.docx
+#	Lab2Rough.R
+#	homework2/Thumbs.db
+#	homework2/data/rvalues.csv
+#	homework2/data/rvalues.xlsx
+#	homework2/images/
+#	homework2/lab notes.txt
+#	homework2/lab2_homework_Nield.html
+#	homework2/lab2_homework_nield.Rmd
+#	homework3/Console Input.txt
+#	homework3/Thumbs.db
+#	homework3/data/GalapagosData.csv
+#	homework3/graph1.tif
+#	homework3/homework3_Nield.Rmd
+#	homework3/homework3_Nield.html
+#
+

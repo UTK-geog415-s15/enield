@@ -1,0 +1,43 @@
+Pull from Git:
+Open up git command and go to your directory cd 'Documents', cd 'enield', git pull upstream master
+
+Looing at tree ring data and rain fall data.
+
+Each year we have the average tree ring width for that plot of 50 trees.
+1=Average Growth
+>1=Greater than average growth
+<1=Less than average growth
+
+We have precip data going back to 1895 and it grouped by month.
+
+What is the relationship between tree ring width and precip?
+We have 12 precip measurements each year but only 1 tree ring measurement/year
+
+We have tree rings going back 2000 years so we can determine the rainfall in past years. 
+
+There will be data manipulation. 
+
+rwi.precip %>% group_by(month) %>%
++     summarize(r=cor(rwi, precip))
++     ggplot(data=., aes(month, r)) + geom_bar(stat='identity') + labs(y='r coefficient') + labs(x='Month')
+
+   month            r
+1    Jan 	0.315829372
+2    Feb  	0.304562553
+3    Mar 	0.244230808
+4    Apr  	0.274397451
+5    May  	0.281569478
+6    Jun  	0.113201718
+7    Jul  	0.255624983
+8    Aug 	-0.003091787
+9    Sep  	0.087771788
+10   Oct 	-0.061649633
+11   Nov  	0.077797480
+12   Dec  	0.175763184
+
+rwi.precip %>% filter(month=='Dec') %$% cor(rwi, precip)
+[1] 0.1757632
+> rwi.precip %>% filter(month=='Dec') %$% cor(rwi, lag(precip))
+[1] NA
+> rwi.precip %>% filter(month=='Dec') %$% cor(rwi, lag(precip), use='complete.obs')
+[1] 0.4004378
