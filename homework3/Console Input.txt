@@ -1,0 +1,30 @@
+#Lab3 Console Input
+
+ setwd('C:/Users/Emily/Documents/enield/homework3/')
+ 
+ library(ggplot2)
+ library(dplyr)
+ library(tidyr)
+ library(magrittr)
+ precip <- read.csv('data/precip.csv')
+ rwi <- read.csv('data/rwi.csv')
+ gd <- read.csv('data/GalapagosData.csv')
+ precip.df <- precip %>% gather(key=month, value=precip, -year) %>% arrange(year, month)
+ precip.df <- precip.df %>% mutate(water_year = lead(year, 6))
+
+annual_precip <- precip.df %>% group_by(water_year) %>% 
++     summarize(precip=sum(precip)) %>%
++     filter(water_year>1895)
+
+rwi.precip.df <- left_join(rwi, annual_precip, by=c('year'='water_year'))
+
+ggplot(data=rwi.precip.df) + geom_point(aes(x=precip, y=rwi))
+
+ model <- lm(rwi~precip, data=rwi.precip.df)
+
+summary(model)
+
+plot(model)
+
+#Q3
+ggplot(data=gd) + geom_point(aes(x=Area.km, y=N.species)) + scale_y_continuous(trans = "log") + scale_x_continuous(trans = "log")

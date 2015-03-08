@@ -11,7 +11,7 @@ In the data folder there are two files:
 
 First, let's do some preliminary work: setting the workspace, loading libraries and loading data.
 ```{r set working directory}
-setwd('~/Dropbox/git_root/homework/homework2/')
+setwd('C:/Users/Emily/Documents/enield/homework2/')
 ```
 
 
@@ -152,6 +152,7 @@ rwi.precip %>% filter(month=='Dec') %$% cor(rwi, lag(precip),use='complete.obs')
 Using the tidy format, it's fairly easy to get a correlation for each month all at once.  We just have to remember the "group-then-summarize"" trick:
 ```{r}
 rwi.precip %>% group_by(month) %>% summarise(r=cor(rwi, precip))
+rwi.precip %>% group_by(month) %>% summarise(r=cor(rwi, lag(precip), use='complete.obs'))
 ```
 
 # Summary of dplyr commands

@@ -1,0 +1,152 @@
+---
+title: "Homework3_Nield"
+author: "Emily Nield"
+date: "February 23, 2015"
+output: html_document
+---
+
+## Setup
+First, let's do some preliminary work: setting the workspace, loading libraries and loading data.
+```{r set working directory}
+setwd('C:/Users/Emily/Documents/enield/homework3/')
+```
+
+
+
+```{r load libraries, message=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(magrittr) # for the %$% notation I'll use later.
+```
+
+
+
+```{r load data}
+precip <- read.csv('data/precip.csv')
+rwi <- read.csv('data/rwi.csv')
+gd <- read.csv('data/GalapagosData.csv')
+
+summary(rwi)
+summary(precip)
+```
+
+## Data Tidying
+I want to create a data.frame that has columns of:
+
+year, month, precip.  Remember, the precip does not come in that format.  Instead it looks like this:
+```{r}
+head(precip)
+```
+I will gather the data into one column called precip...
+```{r}
+precip.df <- precip %>% gather(key=month, value=precip, -year) %>% arrange(year, month)
+head(precip.df)
+```
+
+Create a new column that is the "hydologic year", or the precipitation year that the tree growth seems to correspond to.
+```{r}
+precip.df <- precip.df %>% mutate(water_year = lead(year, 6))
+head(precip.df, 20)
+```
+
+With this water_year column in place, we want to calculate the total precipitation each water_year.  This is a group and summarize task.
+```{r}
+annual_precip <- precip.df %>% group_by(water_year) %>% 
+  summarize(precip=sum(precip)) %>%
+  filter(water_year>1895)
+# Don't forget to filter out year=1895 because it wasn't complete.
+head(annual_precip)
+```
+
+
+Now we can merge that with the tree ring data...
+
+```{r}
+rwi.precip.df <- left_join(rwi, annual_precip, by=c('year'='water_year'))
+tail(rwi.precip.df)
+```
+
+## Exploratory analysis
+Plot a scatterplot.  You should always visualize the data first.
+```{r}
+ggplot(data=rwi.precip.df) + geom_point(aes(x=precip, y=rwi))
+```
+## Linear regression
+Nonetheless, we'll fit a linear regression to the data.
+```{r}
+# Fit the model
+model <- lm(rwi~precip, data=rwi.precip.df, na.action=na.exclude)
+# Print out a summary
+summary(model)
+```
+## Regression Diagnostics
+
+Regression diagnostic plots
+```{r diagnostics}
+plot(model) # You can then step through each plot, Hit <Return> to see the next plot
+# Or you can see one plot at a time, e.g.
+plot(model, which=2)
+```
+
+## Homework Question 1
+Homework: For the first three plots, describe wich assumptions they help to visually evaluate.
+
+On the first regression plot the data follows a curve that is in the shape of a parabola that opens downwards. This suggests a non-linearity in our data. This shape can be explained in the following diagram:
+
+![Screenshot of Rstudio](graph1.tif)
+
+We assumed that there was a linear relationship between our two variables, as shown in blue in the above diagram, but in reality there is most likely a logarithmic relationship between them. This would cause the residuals to be negative at the end of the curve and positive in the middle. This would explain the curve in the first regression plot. 
+
+The second regression plot is a quartile plot and it is used to test the assumption that the residuals are normally distributed. If the residuals were normally distributed than there would be a straight line. The line in this graph is mildly sinuous so the residuals are not normally distributed perfectlly but it is close enough. 
+
+The third residual plot is used to test the assumption that the variance is constant. If the variance is constant than there would be a straight horizontal line on this plot but the line is kinked so this assumption is not true for our example. 
+
+## Homework Question 2
+Homework: These data are time series data. In general, data are correlated in time, and this would be a problem for simple linear regression. Plot the regression residuals vs time, and visually assess whether there is evidence of temporal (serial) correlation.
+
+Add a new coloumn to the data set for residuals in order to plot year against the residuals. 
+```{r}
+# Add the residual column
+rwi.precip.df $resid <- residuals (model)
+# Print out a summary
+head(rwi.precip.df)
+```
+
+Plot the data
+```{r}
+ggplot(data=rwi.precip.df) + geom_point(aes(x=year, y=resid)) + scale_x_continuous(limits = c(1890, 2015))
+```
+
+A quick visual assessment of the above graph indicates that there is no evidence of a temporal correlation. The residuals neither increase nor decrease over time; they are randomly distributed throughout time. 
+
+## Homework Question 3
+Homework: In the data folder is the dataset GalapagosData.txt.  The species data represents the number of species recorded from each of the Galapagos islands. A fundamental 'law' of island biogeography is that species diversity tends to follow a power law relationship with island area, i.e. $$\mbox{species} = \alpha\times{\mbox{area}^\beta}$$  
+This is not linear, but it suggests that the following regression might make sense: 
+$$\log(\mbox{species}) = a + \beta \times log(\mbox{area})$$
+$a$ is not quite $\alpha$, rather $a=\log(\alpha)$.  
+Fit this regression, and present a brief write-up that a) describes the results in words, and b) summarizes your conclusions from diagnostic model checking.
+
+Plot the data on a log-log scale
+```{r}
+ggplot(data=gd) + geom_point(aes(x=Area.km, y=N.species)) + scale_y_continuous(trans = "log") + scale_x_continuous(trans = "log")
+```
+
+I want to transofrm the Galapagos data by log 10 and then take the linear regression of it. So I will create a new data set: gdlog.
+```{r}
+
+model2 <- lm(Log_N_Species~Log_Area_km, data=gd)
+
+summary(model2)
+```
+
+a) This regression on the log-log plot allows us to determine the most likely values of $\alpha$ and $\beta$. This regression determined that $\alpha=10^1.319$ and $\beta=0.33$. A linear regression could not be performed on the original relationship between species and area (as shown in the first equation). This is because it violates the assumption that there is a linear relationship between the two variables. In order for this assumption to be met the data had to be transformed on a log-log scale. From this, the linear regression was applied and the slope and intercept of the line were determined.  In general, a small increase in the area of the island leads to a large increase in the number of species that occupy that island. 
+
+Diagnostic Model Checking: In order to do this we need to plot the resdidual graphs.
+```{r diagnostics Galapagos}
+plot(model2) 
+```
+
+b) In order to apply a linear regression it is assumed that there is a linear relationship between the two variables. This is tested in the first residual plot. Ideally you would want a horizontal line in this plot but are line has kinks so this suggests there is a weak correlation between our variables. This is most likely due to the outliers in the data set. These outliers are the following islands: Charles, Gardner, and Culpepper. This could be a result of human occupation leading to a decrease in species that occupy an island.
+This is a small data set (less than 30 degrees of freedom) so in order to properly apply a linear regression one must assume that the errors around the line will have a bell curve distribution. The second residual plot assesses this assumption. The data in this plot do not fit on a straight line so this assumption is not valid.  
+Another assumption for linear regressions is that the variance is constant. This is tested in the third residual plot. If the variance is constant than there would be a straight line on this plot but the line is kinked so this assumption is not true for our example.

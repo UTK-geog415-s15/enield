@@ -1,7 +1,7 @@
 Homework 1 
 
 To open lab files in git shell write
-
+git pull upstream master
 
 Use .csv files for data in RStudio.
 
